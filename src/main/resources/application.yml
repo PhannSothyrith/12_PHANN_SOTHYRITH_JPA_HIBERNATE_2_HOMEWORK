@@ -1,0 +1,14 @@
+#spring.application.name=homework
+spring:
+  application:
+    name: homework
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testing_db
+    username: postgres
+    password: database09
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
