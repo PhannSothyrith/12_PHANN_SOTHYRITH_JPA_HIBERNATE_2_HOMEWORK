@@ -8,16 +8,9 @@ pipeline {
 
     environment {
         SONAR_HOST_URL = "http://sonarqube-202511104738-sonarqube-1:9000"   // Ensure SonarQube is running on this URL
-        SONAR_LOGIN = "sqp_3718835b2bf31c52c01ba7f84724d77cf9e1b997" // Your SonarQube token
+        SONAR_LOGIN = "sqp_5a11b9330c12242e947e0916ebfb6719f90cdba1" // Your SonarQube token
     }
 
-//     stages {
-//         stage('Git Checkout') {
-//             steps {
-//                 checkout scm
-//                 echo 'Git Checkout Completed'
-//             }
-//         }
          stages {
                 stage('Git Checkout') {
                     steps {
@@ -30,13 +23,13 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {  // Ensure SonarQube is configured in Jenkins
-                    withCredentials([string(credentialsId: 'gradle2', variable: 'GRADLE_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'demo', variable: 'GRADLE_TOKEN')]) {
                         script {
                             // Run the Gradle build and SonarQube analysis
                             sh """
-                                ./gradlew clean build \
-                                    -Dsonar.projectKey=gradle2 \
-                                    -Dsonar.projectName="gradle2" \
+                                ./gradlew sonar \
+                                    -Dsonar.projectKey=demo \
+                                    -Dsonar.projectName="demo" \
                                     -Dsonar.host.url=${SONAR_HOST_URL} \
                                     -Dsonar.login=${SONAR_LOGIN}
                             """
