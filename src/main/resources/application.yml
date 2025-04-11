@@ -3,12 +3,12 @@ spring:
   application:
     name: homework
   datasource:
-    url: jdbc:postgresql://localhost:5432/testing_db
+    url: jdbc:postgresql://localhost:5434/testing_db
     username: postgres
     password: database09
   jpa:
-    database: postgresql
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
+    open-in-view: true
+server:
+  port: 8282
