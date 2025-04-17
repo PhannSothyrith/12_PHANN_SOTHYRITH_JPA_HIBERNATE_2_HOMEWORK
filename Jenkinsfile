@@ -2,40 +2,64 @@ pipeline {
     agent any
 
     tools {
-        gradle 'Gradle'      // Ensure Gradle tool is correctly configured in Jenkins
-        jdk 'JDK 21'         // Ensure JDK 21 is correctly configured in Jenkins
+        gradle 'Gradle'      // Ensure this Gradle tool is configured in Jenkins
+        jdk 'JDK 21'         // Ensure this JDK is configured in Jenkins
     }
 
     environment {
-        SONAR_HOST_URL = "http://sonarqube-202511104738-sonarqube-1:9000"   // Ensure SonarQube is running on this URL
-        SONAR_LOGIN = "sqp_5a11b9330c12242e947e0916ebfb6719f90cdba1" // Your SonarQube token
+        SONAR_HOST_URL = "http://sonarqube-202511104738-sonarqube-1:9000"
+        SONAR_LOGIN = "sqp_3718835b2bf31c52c01ba7f84724d77cf9e1b997"
     }
 
-         stages {
-                stage('Git Checkout') {
-                    steps {
-                        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/RetSokhim/13_RET_SOKHIM_SPRING_DATA_JPA_HOMEWORK.git']])
-                        echo 'Git Checkout Completed'
-                    }
-                }
-
+    stages {
+        stage('Git Checkout') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    extensions: [],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/PhannSothyrith/12_PHANN_SOTHYRITH_JPA_HIBERNATE_2_HOMEWORK.git'
+                    ]]
+                )
+                echo 'Git Checkout Completed'
+            }
+        }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {  // Ensure SonarQube is configured in Jenkins
-                    withCredentials([string(credentialsId: 'demo', variable: 'GRADLE_TOKEN')]) {
-                        script {
-                            // Run the Gradle build and SonarQube analysis
-                            sh """
-                                ./gradlew sonar \
-                                    -Dsonar.projectKey=demo \
-                                    -Dsonar.projectName="demo" \
-                                    -Dsonar.host.url=${SONAR_HOST_URL} \
-                                    -Dsonar.login=${SONAR_LOGIN}
-                            """
-                        }
-                        echo 'SonarQube Analysis Completed'
+                withSonarQubeEnv('sonarqube') {
+                    withCredentials([string(credentialsId: 'demo', variable: 'DEMO-TOKEN')]) {
+                        sh """
+                            ./gradlew clean test jacocoTestReport sonar \
+                                -Dsonar.projectKey=demo \
+                                -Dsonar.projectName="demo" \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.login=${SONAR_LOGIN} \
+                                -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
+                        """
                     }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    script {
+                        def qualityGate = waitForQualityGate()
+                        if (qualityGate.status != 'OK') {
+                            error "Pipeline failed due to SonarQube quality gate failure: ${qualityGate.status}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("gradle2-app:latest")
+                    echo "Docker Image Built Successfully"
                 }
             }
         }

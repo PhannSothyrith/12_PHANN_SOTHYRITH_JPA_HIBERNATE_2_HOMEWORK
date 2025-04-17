@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'jacoco'
 }
 
 group = 'org.example'
@@ -45,4 +46,16 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+jacoco {
+    toolVersion = "0.8.11" // ✅ Latest compatible Jacoco version as of now
+}
+
+jacocoTestReport {
+    dependsOn test // ✅ run tests before generating report
+    reports {
+        xml.required = true // ✅ this is needed by SonarQube
+        html.required = true
+        csv.required = false
+    }
 }
