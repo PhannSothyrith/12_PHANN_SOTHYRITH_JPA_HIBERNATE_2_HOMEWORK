@@ -30,7 +30,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     withCredentials([string(credentialsId: 'r-demo', variable: 'GRADLE_TOKEN')]) {
                         sh """
-                            ./gradlew clean build -x test \
+                            ./gradlew clean sonarqube \
                                 -Dsonar.projectKey=r-demo \
                                 -Dsonar.projectName="r-demo" \
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
