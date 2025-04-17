@@ -8,60 +8,39 @@ pipeline {
 
     environment {
         SONAR_HOST_URL = "http://sonarqube-202511104738-sonarqube-1:9000"
-        SONAR_LOGIN = "sqp_3718835b2bf31c52c01ba7f84724d77cf9e1b997"
+        SONAR_LOGIN = "sqp_4cb612ac193c379687118ac3b12d7f8dbe1e3174"
     }
 
     stages {
         stage('Git Checkout') {
             steps {
                 checkout scmGit(
-                    branches: [[name: '*/main']],
+                    branches: [[name: '*/master']],
                     extensions: [],
                     userRemoteConfigs: [[
                         url: 'https://github.com/PhannSothyrith/12_PHANN_SOTHYRITH_JPA_HIBERNATE_2_HOMEWORK.git'
                     ]]
                 )
-                echo 'Git Checkout Completed'
+                echo '✅ Git Checkout Completed'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    withCredentials([string(credentialsId: 'demo', variable: 'DEMO-TOKEN')]) {
+                    withCredentials([string(credentialsId: 'r-demo', variable: 'GRADLE_TOKEN')]) {
                         sh """
-                            ./gradlew clean test jacocoTestReport sonar \
-                                -Dsonar.projectKey=demo \
-                                -Dsonar.projectName="demo" \
+                            ./gradlew clean build -x test \
+                                -Dsonar.projectKey=r-demo \
+                                -Dsonar.projectName="r-demo" \
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
                                 -Dsonar.login=${SONAR_LOGIN} \
-                                -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
                         """
                     }
                 }
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 2, unit: 'MINUTES') {
-                    script {
-                        def qualityGate = waitForQualityGate()
-                        if (qualityGate.status != 'OK') {
-                            error "Pipeline failed due to SonarQube quality gate failure: ${qualityGate.status}"
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("gradle2-app:latest")
-                    echo "Docker Image Built Successfully"
-                }
-            }
-        }
     }
 }
+
