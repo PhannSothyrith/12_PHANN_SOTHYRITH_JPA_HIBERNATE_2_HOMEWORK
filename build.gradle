@@ -68,3 +68,8 @@ jacocoTestReport {
         csv.required = false
     }
 }
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+}
