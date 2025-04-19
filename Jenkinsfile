@@ -28,7 +28,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'r-demo', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'usonar-token', variable: 'SONAR_TOKEN')]) { // Updated credential ID
                     sh """
                         ./gradlew sonar \\
                             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \\
@@ -44,7 +44,7 @@ pipeline {
         stage('SonarQube Report to Slack') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'r-demo', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'usonar-token', variable: 'SONAR_TOKEN')]) { // Updated credential ID
                         def metrics = "code_smells,bugs,vulnerabilities,new_code_smells,new_bugs,new_vulnerabilities,coverage,new_coverage,duplicated_lines_density,sqale_rating,reliability_rating,security_rating"
 
                         def response = sh(
