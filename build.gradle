@@ -51,7 +51,7 @@ sonarqube {
         property "sonar.projectName", "r-demo"
         property "sonar.host.url", "http://localhost:9000"
         // property "sonar.login", "sqp_4cb612ac193c379687118ac3b12d7f8dbe1e3174"
-        property "sonar.login", "squ_49f0936a0fc465e4cc638df41a41232896a03693"
+        property "sonar.login", "squ_c229e1161e2599eddad46ba59ed888b74d969196"
     }
 }
 
