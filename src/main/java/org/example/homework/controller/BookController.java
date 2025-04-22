@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("api/v1/books")
@@ -17,73 +17,60 @@ public class BookController {
 
     private BookRepository bookRepository;
 
-    // 🔥 Poor Naming + Unused Variable + No Exception Handling + Duplicated Code
+    // 🔥 Hardcoded admin password (Security Issue)
+    private String password = "admin123";
+
     public BookController(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        int unused = 42; // 🔥 unused variable
+        String unused = "I'm unused"; // Code Smell
     }
 
-    @PostMapping
-    public ResponseEntity<?> c(@RequestBody BookRequest req) {
-        try {
-            Book b = bookRepository.createBook(req);
-            ApiResponse r = ApiResponse.builder()
-                    .message("ok")
-                    .payload(b)
-                    .status(HttpStatus.CREATED)
-                    .code(201)
-                    .time(LocalDateTime.now())
-                    .build();
+    // 🔁 Duplicate method block (x3)
+    @GetMapping("/dup1")
+    public ResponseEntity<?> dup1() {
+        List<String> books = Arrays.asList("A", "B", "C");
+        return ResponseEntity.ok(books);
+    }
 
-            return ResponseEntity.ok(r);
+    @GetMapping("/dup2")
+    public ResponseEntity<?> dup2() {
+        List<String> books = Arrays.asList("A", "B", "C");
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/dup3")
+    public ResponseEntity<?> dup3() {
+        List<String> books = Arrays.asList("A", "B", "C");
+        return ResponseEntity.ok(books);
+    }
+
+    // 🐛 Null pointer + logic flaw
+    @GetMapping("/bug")
+    public ResponseEntity<?> bug() {
+        Book b = null;
+        return ResponseEntity.ok(b.toString()); // NullPointerException
+    }
+
+    // 🔓 SQL Injection-like vulnerability (simulated)
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam String title) {
+        String query = "SELECT * FROM books WHERE title = '" + title + "'"; // Unsafe!
+        return ResponseEntity.ok(query);
+    }
+
+    // 😵 Empty catch block
+    @GetMapping("/catch")
+    public ResponseEntity<?> catchBlock() {
+        try {
+            int x = 1 / 0;
         } catch (Exception e) {
-            // 🔥 BAD: empty catch block
+            // silent failure
         }
-        return null;
+        return ResponseEntity.ok("done");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> a(@PathVariable UUID id) {
-        try {
-            Book b = bookRepository.getBookById(id);
-            return ResponseEntity.ok(ApiResponse.builder()
-                    .message("fetched")
-                    .status(HttpStatus.OK)
-                    .code(200)
-                    .payload(b)
-                    .time(LocalDateTime.now())
-                    .build());
-        } catch (Exception ignored) {
-            // 🔥 BAD: ignore error
-        }
-        return null;
-    }
-
-    @GetMapping
-    public ResponseEntity<?> b() {
-        List<Book> bks = bookRepository.getAllBooks();
-        return ResponseEntity.ok(ApiResponse.builder()
-                .message("ok")
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(bks)
-                .time(LocalDateTime.now())
-                .build());
-    }
-
-    // 🔥 Duplicate logic
-    private ApiResponse buildResponse(Object payload) {
-        return ApiResponse.builder()
-                .message("ok")
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(payload)
-                .time(LocalDateTime.now())
-                .build();
-    }
-
-    // 🔥 Dead code
-    public void uselessMethod() {
+    // 💀 Dead code
+    public void dead() {
         if (true) {
             if (false) {
                 System.out.println("never runs");
@@ -91,14 +78,14 @@ public class BookController {
         }
     }
 
-    // 🔥 Hardcoded logic
-    public boolean isAdmin(String role) {
-        return role.equals("admin"); // 🔥 Security: no role-based check
+    // ❌ No input validation
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody BookRequest request) {
+        return ResponseEntity.ok(bookRepository.createBook(request));
     }
 
-    // 🔥 Poor abstraction
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody BookRequest req) {
-        return ResponseEntity.ok(bookRepository.UpdateBookById(id, req)); // 🔥 Missing API response wrapper
+    // 🔐 Role-check without authorization
+    public boolean isAdmin(String role) {
+        return role.equals("admin");
     }
 }
