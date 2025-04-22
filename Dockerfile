@@ -4,18 +4,13 @@ FROM eclipse-temurin:21-jdk AS build
 # Set the working directory
 WORKDIR /usr/app/
 
-# Copy Gradle files and cache dependencies
-COPY build.gradle settings.gradle ./
-RUN ./gradlew build --no-daemon
-
 # Copy all project files to the container
 COPY . .
-
+RUN chmod +x gradlew
 # Run the Gradle build
-RUN ./gradlew bootJar --no-daemon
-
-# Step 2: Use a smaller JDK runtime image to run the application
-FROM eclipse-temurin:21-jre  # Ensure correct image and tag
+RUN ./gradlew bootJar
+# Step 2: Use a JDK image to run the application
+FROM eclipse-temurin:21-jdk
 
 # Set environment variables
 ENV JAR_NAME=app.jar
@@ -27,9 +22,8 @@ WORKDIR $APP_HOME
 # Copy the built application from the Gradle container
 COPY --from=build $APP_HOME/build/libs/*.jar app.jar
 
-# Expose port (default Spring Boot port 8282)
+# Expose port 8081
 EXPOSE 8282
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "/usr/app/app.jar"]
-
