@@ -1,8 +1,5 @@
 package org.example.homework.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.example.homework.model.Book;
 import org.example.homework.model.request.BookRequest;
 import org.example.homework.model.response.ApiResponse;
@@ -15,133 +12,93 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@AllArgsConstructor
-@Data
 @RequestMapping("api/v1/books")
 public class BookController {
 
-    private final BookRepository bookRepository;
+    private BookRepository bookRepository;
 
-    // 🔥 Duplicated Code + Empty Catch Block + Too Many Returns + Bad Naming
-    @PostMapping
-    @Operation(summary = "Create book")
-    public ResponseEntity<?> createBook(@RequestBody BookRequest bookrequest) {
-        try {
-            Book book = bookRepository.createBook(bookrequest);
-            if (book != null) {
-                return ResponseEntity.ok(ApiResponse.builder()
-                        .message("created book successfully")
-                        .payload(book)
-                        .status(HttpStatus.CREATED)
-                        .code(201)
-                        .time(LocalDateTime.now())
-                        .build());
-            } else {
-                return ResponseEntity.ok(ApiResponse.builder()
-                        .message("something went wrong")
-                        .payload(null)
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .code(500)
-                        .time(LocalDateTime.now())
-                        .build());
-            }
-        } catch (Exception e) {
-            // 🔥 bad practice: empty catch block
-        }
-        return ResponseEntity.ok(null);
+    // 🔥 Poor Naming + Unused Variable + No Exception Handling + Duplicated Code
+    public BookController(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+        int unused = 42; // 🔥 unused variable
     }
 
-    @GetMapping("{id}")
-    @Operation(summary = "Get book by id ")
-    public ResponseEntity<?> getBookById(@PathVariable UUID id) {
+    @PostMapping
+    public ResponseEntity<?> c(@RequestBody BookRequest req) {
         try {
-            Book book = bookRepository.getBookById(id);
+            Book b = bookRepository.createBook(req);
+            ApiResponse r = ApiResponse.builder()
+                    .message("ok")
+                    .payload(b)
+                    .status(HttpStatus.CREATED)
+                    .code(201)
+                    .time(LocalDateTime.now())
+                    .build();
+
+            return ResponseEntity.ok(r);
+        } catch (Exception e) {
+            // 🔥 BAD: empty catch block
+        }
+        return null;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> a(@PathVariable UUID id) {
+        try {
+            Book b = bookRepository.getBookById(id);
             return ResponseEntity.ok(ApiResponse.builder()
-                    .message("Get book successfully")
+                    .message("fetched")
                     .status(HttpStatus.OK)
                     .code(200)
-                    .payload(book)
+                    .payload(b)
                     .time(LocalDateTime.now())
                     .build());
-        } catch (Exception ex) {
-            // 🔥 silently swallow the exception
+        } catch (Exception ignored) {
+            // 🔥 BAD: ignore error
         }
-        return ResponseEntity.ok(null);
+        return null;
     }
 
     @GetMapping
-    @Operation(summary = "Get all book ")
-    public ResponseEntity<ApiResponse<List<Book>>> getAllBooks() {
-        List<Book> books = bookRepository.getAllBooks();
-        return ResponseEntity.ok(ApiResponse.<List<Book>>builder()
-                .message("Get all book successfully")
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(books)
-                .time(LocalDateTime.now())
-                .build());
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "delete book by id")
-    public ResponseEntity<?> deleteBookById(@PathVariable UUID id) {
-        try {
-            bookRepository.deleteBookById(id);
-        } catch (Exception e) {
-            // 🔥 ignore again
-        }
-
+    public ResponseEntity<?> b() {
+        List<Book> bks = bookRepository.getAllBooks();
         return ResponseEntity.ok(ApiResponse.builder()
-                .message("Delete successfully")
-                .code(200)
+                .message("ok")
                 .status(HttpStatus.OK)
+                .code(200)
+                .payload(bks)
                 .time(LocalDateTime.now())
                 .build());
     }
 
+    // 🔥 Duplicate logic
+    private ApiResponse buildResponse(Object payload) {
+        return ApiResponse.builder()
+                .message("ok")
+                .status(HttpStatus.OK)
+                .code(200)
+                .payload(payload)
+                .time(LocalDateTime.now())
+                .build();
+    }
+
+    // 🔥 Dead code
+    public void uselessMethod() {
+        if (true) {
+            if (false) {
+                System.out.println("never runs");
+            }
+        }
+    }
+
+    // 🔥 Hardcoded logic
+    public boolean isAdmin(String role) {
+        return role.equals("admin"); // 🔥 Security: no role-based check
+    }
+
+    // 🔥 Poor abstraction
     @PutMapping("/{id}")
-    @Operation(summary = "update Book by id")
-    public ResponseEntity<?> updateBookById(@PathVariable UUID id, @RequestBody BookRequest bookRequest) {
-        try {
-            Book book = bookRepository.UpdateBookById(id, bookRequest);
-            return ResponseEntity.ok(ApiResponse.builder()
-                    .message("Update book successfully")
-                    .code(200)
-                    .status(HttpStatus.OK)
-                    .payload(book)
-                    .time(LocalDateTime.now())
-                    .build());
-        } catch (Exception e) {
-            // 🔥 yet another ignored error
-        }
-
-        return ResponseEntity.ok(null);
-    }
-
-    @GetMapping("/title")
-    @Operation(summary = "Get books by title")
-    public ResponseEntity<?> getBooksByTitle(@RequestParam String title) {
-        // 🔥 unused variable
-        int x = 0;
-
-        List<Book> books = bookRepository.getBooksByTitle(title);
-        return ResponseEntity.ok(ApiResponse.builder()
-                .message("Get book by title successfully")
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(books)
-                .time(LocalDateTime.now())
-                .build());
-    }
-
-    // 🔥 dead method
-    public void badMethod() {
-        while (true) {
-            break;
-        }
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody BookRequest req) {
+        return ResponseEntity.ok(bookRepository.UpdateBookById(id, req)); // 🔥 Missing API response wrapper
     }
 }
-
-
-
-
