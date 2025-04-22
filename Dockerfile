@@ -15,7 +15,7 @@ COPY . .
 RUN ./gradlew bootJar --no-daemon
 
 # Step 2: Use a smaller JDK runtime image to run the application
-FROM eclipse-temurin:21-jre-slim
+FROM eclipse-temurin:21-jre  # Updated to use a correct image
 
 # Set environment variables
 ENV JAR_NAME=app.jar
