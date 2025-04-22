@@ -10,102 +10,138 @@ import org.example.homework.repository.BookRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
 @Data
 @RequestMapping("api/v1/books")
 public class BookController {
+
     private final BookRepository bookRepository;
+
+    // 🔥 Duplicated Code + Empty Catch Block + Too Many Returns + Bad Naming
     @PostMapping
     @Operation(summary = "Create book")
-    public ResponseEntity<?> createBook (@RequestBody BookRequest bookrequest){
-        Book book  = bookRepository.createBook(bookrequest);
-        ApiResponse apiResponse = ApiResponse.builder()
-                .message("created book successfully")
-                .payload(book)
-                .status(HttpStatus.CREATED)
-                .code(201)
-                .time(LocalDateTime.now())
-                .build();
-        return ResponseEntity.ok(apiResponse);
-
+    public ResponseEntity<?> createBook(@RequestBody BookRequest bookrequest) {
+        try {
+            Book book = bookRepository.createBook(bookrequest);
+            if (book != null) {
+                return ResponseEntity.ok(ApiResponse.builder()
+                        .message("created book successfully")
+                        .payload(book)
+                        .status(HttpStatus.CREATED)
+                        .code(201)
+                        .time(LocalDateTime.now())
+                        .build());
+            } else {
+                return ResponseEntity.ok(ApiResponse.builder()
+                        .message("something went wrong")
+                        .payload(null)
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .code(500)
+                        .time(LocalDateTime.now())
+                        .build());
+            }
+        } catch (Exception e) {
+            // 🔥 bad practice: empty catch block
+        }
+        return ResponseEntity.ok(null);
     }
+
     @GetMapping("{id}")
     @Operation(summary = "Get book by id ")
-    public ResponseEntity<?> getBookById (@PathVariable UUID id){
-
-        Book book  = bookRepository.getBookById(id);
-        ApiResponse apiResponse = ApiResponse.builder()
-                .message("Get book successfully")
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(book)
-                .time(LocalDateTime.now())
-                .build();
-        return ResponseEntity.ok(apiResponse);
-
+    public ResponseEntity<?> getBookById(@PathVariable UUID id) {
+        try {
+            Book book = bookRepository.getBookById(id);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Get book successfully")
+                    .status(HttpStatus.OK)
+                    .code(200)
+                    .payload(book)
+                    .time(LocalDateTime.now())
+                    .build());
+        } catch (Exception ex) {
+            // 🔥 silently swallow the exception
+        }
+        return ResponseEntity.ok(null);
     }
+
     @GetMapping
     @Operation(summary = "Get all book ")
-    public ResponseEntity<ApiResponse<List<Book>>> getAllBooks(){
+    public ResponseEntity<ApiResponse<List<Book>>> getAllBooks() {
         List<Book> books = bookRepository.getAllBooks();
-        ApiResponse<List<Book>> apiResponse = ApiResponse.<List<Book>>builder()
+        return ResponseEntity.ok(ApiResponse.<List<Book>>builder()
                 .message("Get all book successfully")
                 .status(HttpStatus.OK)
                 .code(200)
                 .payload(books)
                 .time(LocalDateTime.now())
-                .build();
-        return ResponseEntity.ok(apiResponse);
+                .build());
     }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "delete book by id")
+    public ResponseEntity<?> deleteBookById(@PathVariable UUID id) {
+        try {
+            bookRepository.deleteBookById(id);
+        } catch (Exception e) {
+            // 🔥 ignore again
+        }
 
-    public ResponseEntity<?> deleteBookById (@PathVariable UUID id){
-        bookRepository.deleteBookById(id);
-        ApiResponse apiResponse = ApiResponse.builder()
+        return ResponseEntity.ok(ApiResponse.builder()
                 .message("Delete successfully")
                 .code(200)
                 .status(HttpStatus.OK)
                 .time(LocalDateTime.now())
-                .build();
-        return ResponseEntity.ok(apiResponse);
+                .build());
     }
+
     @PutMapping("/{id}")
     @Operation(summary = "update Book by id")
-    public ResponseEntity <?> updateBookById (@PathVariable UUID id , @RequestBody BookRequest bookRequest){
+    public ResponseEntity<?> updateBookById(@PathVariable UUID id, @RequestBody BookRequest bookRequest) {
+        try {
+            Book book = bookRepository.UpdateBookById(id, bookRequest);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Update book successfully")
+                    .code(200)
+                    .status(HttpStatus.OK)
+                    .payload(book)
+                    .time(LocalDateTime.now())
+                    .build());
+        } catch (Exception e) {
+            // 🔥 yet another ignored error
+        }
 
-        Book book = bookRepository.UpdateBookById(id,bookRequest);
-        ApiResponse apiResponse = ApiResponse.builder()
-                .message("Update book successfully")
-                .code(200)
-                .status(HttpStatus.OK)
-                .payload(book)
-                .time(LocalDateTime.now())
-                .build();
-        return ResponseEntity.ok(apiResponse);
-
+        return ResponseEntity.ok(null);
     }
+
     @GetMapping("/title")
     @Operation(summary = "Get books by title")
     public ResponseEntity<?> getBooksByTitle(@RequestParam String title) {
+        // 🔥 unused variable
+        int x = 0;
+
         List<Book> books = bookRepository.getBooksByTitle(title);
-        ApiResponse apiResponse = ApiResponse.builder()
+        return ResponseEntity.ok(ApiResponse.builder()
                 .message("Get book by title successfully")
                 .status(HttpStatus.OK)
                 .code(200)
                 .payload(books)
                 .time(LocalDateTime.now())
-                .build();
-        return ResponseEntity.ok(apiResponse);
+                .build());
     }
 
-
+    // 🔥 dead method
+    public void badMethod() {
+        while (true) {
+            break;
+        }
+    }
 }
+
 
 
 
