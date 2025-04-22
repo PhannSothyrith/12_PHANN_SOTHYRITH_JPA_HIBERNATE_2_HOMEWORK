@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class HomeworkApplicationTests {
 
-    @Test
+    // @Test
     @Disabled("Disabled until DB connection issue is resolved")
     void contextLoads() {
     }
