@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        SONAR_HOST_URL = "http://sonarqube-202511104738-sonarqube-1:9000"
+        SONAR_HOST_URL = "http://sonarqube:9002"
         SONAR_PROJECT_KEY = "r-demo"
         SONAR_PROJECT_NAME = "r-demo"
     }
