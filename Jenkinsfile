@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        SONAR_HOST_URL = "http://sonarqube:9002"
+        SONAR_HOST_URL = "http://sonarqube:9002"  // Ensure SonarQube URL is correctly set to port 9002
         SONAR_PROJECT_KEY = "r-demo"
         SONAR_PROJECT_NAME = "r-demo"
     }
@@ -23,6 +23,12 @@ pipeline {
                     ]]
                 )
                 echo '✅ Git Checkout Completed'
+            }
+        }
+
+        stage('Debug SONAR_HOST_URL') {
+            steps {
+                echo "SonarQube Host URL: ${SONAR_HOST_URL}"  // Debugging the SonarQube URL
             }
         }
 
