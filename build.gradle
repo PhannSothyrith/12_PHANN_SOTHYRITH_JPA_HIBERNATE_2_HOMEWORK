@@ -45,13 +45,12 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
-<<<<<<< HEAD
+
 springBoot {
     mainClass = 'org.example.homework.HomeworkApplication'
 }
 
 
-=======
 // sonarqube {
 //     properties {
 //         property "sonar.projectKey", "r-demo"
@@ -61,7 +60,6 @@ springBoot {
 //         property "sonar.java.binaries", "build/classes/java/main"  // Add this line
 //     }
 // }
->>>>>>> 4af2abb319a6c3c56a0d92bf2f552a728b40310c
 sonarqube {
     properties {
         property "sonar.projectKey", "r-demo"

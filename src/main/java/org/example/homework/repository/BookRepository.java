@@ -48,7 +48,7 @@ public class BookRepository {
         }else {
             throw new CustomNotFoundException("Book not found with ID: "+ id);
         }
-    }
+    }   
 
 
     public Book UpdateBookById(UUID id, BookRequest bookRequest) {
