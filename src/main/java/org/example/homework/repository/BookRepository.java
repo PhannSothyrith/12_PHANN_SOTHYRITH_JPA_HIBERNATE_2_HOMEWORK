@@ -6,11 +6,7 @@ import jakarta.transaction.Transactional;
 import org.example.homework.exception.CustomNotFoundException;
 import org.example.homework.model.Book;
 import org.example.homework.model.request.BookRequest;
-import org.springframework.boot.json.JacksonJsonParser;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import java.util.List;
 import java.util.UUID;
 
