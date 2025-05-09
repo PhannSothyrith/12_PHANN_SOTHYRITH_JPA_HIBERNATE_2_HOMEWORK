@@ -49,17 +49,6 @@ dependencies {
 springBoot {
     mainClass = 'org.example.homework.HomeworkApplication'
 }
-
-
-// sonarqube {
-//     properties {
-//         property "sonar.projectKey", "r-demo"
-//         property "sonar.projectName", "r-demo"
-//         property "sonar.host.url", "http://localhost:9000"
-//         property "sonar.login", "squ_c229e1161e2599eddad46ba59ed888b74d969196"
-//         property "sonar.java.binaries", "build/classes/java/main"  // Add this line
-//     }
-// }
 sonarqube {
     properties {
         property "sonar.projectKey", "r-demo"
