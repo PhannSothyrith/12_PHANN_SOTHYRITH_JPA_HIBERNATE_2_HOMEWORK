@@ -45,19 +45,33 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
+<<<<<<< HEAD
 springBoot {
     mainClass = 'org.example.homework.HomeworkApplication'
 }
 
 
+=======
+// sonarqube {
+//     properties {
+//         property "sonar.projectKey", "r-demo"
+//         property "sonar.projectName", "r-demo"
+//         property "sonar.host.url", "http://localhost:9000"
+//         property "sonar.login", "squ_c229e1161e2599eddad46ba59ed888b74d969196"
+//         property "sonar.java.binaries", "build/classes/java/main"  // Add this line
+//     }
+// }
+>>>>>>> 4af2abb319a6c3c56a0d92bf2f552a728b40310c
 sonarqube {
     properties {
         property "sonar.projectKey", "r-demo"
         property "sonar.projectName", "r-demo"
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.login", "sqp_4cb612ac193c379687118ac3b12d7f8dbe1e3174"
+        property "sonar.host.url", "http://localhost:9002"
+        property "sonar.token", "sqp_245aa016b11ac75c2fa873f68fc3418182811726"
+        
     }
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
